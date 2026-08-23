@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiệm Hoa Hồng - Hoa Tươi Nghệ Thuật</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-pink: #ff6699;
+            --dark-pink: #d81b60;
+            --light-pink: #fff0f5;
+            --soft-pink-bg: #fff5f8;
+            --text-color: #444444;
+            --card-shadow: 0 4px 15px rgba(255, 102, 153, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--soft-pink-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* ---------------- ADMIN BAR ---------------- */
+        .admin-bar {
+            display: none;
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: right;
+            font-size: 14px;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        body.is-logged-in .admin-bar { display: flex; }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--primary-pink); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .btn-change-pass, .btn-logout {
+            border: none;
+            padding: 6px 14px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-change-pass { background: #f39c12; }
+        .btn-logout { background: #e74c3c; }
+
+        /* ---------------- HEADER ---------------- */
+        header {
+            background: #ffffff;
+            box-shadow: 0 2px 10px rgba(255, 102, 153, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-pink);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-call {
+            background: var(--primary-pink);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-admin-login {
+            background: transparent;
+            color: #888;
+            border: 1px solid #ddd;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-admin-login:hover {
+            color: var(--dark-pink);
+            border-color: var(--dark-pink);
+        }
+
+        /* ---------------- HERO BANNER ---------------- */
+        .hero {
+            background: linear-gradient(rgba(255, 102, 153, 0.25), rgba(216, 27, 96, 0.35)), 
+                        url('https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .hero h1 { font-size: 38px; margin-bottom: 20px; }
+
+        .location-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .social-btns {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+
+        .btn-zalo { background-color: #0084ff; }
+        .btn-fb { background-color: #1877f2; }
+        .btn-phone { background-color: #25d366; }
+
+        /* ---------------- MAIN CONTAINER ---------------- */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 26px;
+            color: var(--dark-pink);
+            margin-bottom: 30px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--light-pink);
+        }
+
+        .product-img { width: 100%; height: 230px; object-fit: cover; }
+        .product-info { padding: 18px; text-align: center; }
+        .product-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+        .product-price { font-size: 19px; color: var(--dark-pink); font-weight: bold; margin-bottom: 12px; }
+
+        .btn-order {
+            display: block;
+            padding: 10px 0;
+            background-color: var(--primary-pink);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .admin-controls {
+            display: none;
+            background: #fff0f5;
+            border-top: 1px dashed var(--primary-pink);
+            padding: 15px;
+        }
+
+        body.admin-mode .admin-controls { display: block; }
+
+        .admin-controls label { display: block; font-size: 12px; font-weight: bold; margin-top: 8px; }
+        .admin-controls input { width: 100%; padding: 6px; margin-top: 4px; border: 1px solid #ffccd5; border-radius: 4px; }
+
+        .btn-delete-prod {
+            margin-top: 12px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .add-product-box {
+            display: none;
+            background: white;
+            border: 2px dashed var(--primary-pink);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        body.admin-mode .add-product-box { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; margin-bottom: 5px; }
+        .form-group input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ffccd5; border-radius: 6px; }
+
+        .upload-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .file-upload-btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .file-upload-btn:hover { background: #e0e0e0; }
+
+        .img-preview {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .btn-submit-add {
+            background-color: var(--dark-pink);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* ---------------- FOOTER LIÊN HỆ ---------------- */
+        footer {
+            background: #ffffff;
+            border-top: 1px solid #ffe0e9;
+            padding: 40px 20px 20px;
+            margin-top: 50px;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .footer-col h3 {
+            color: var(--dark-pink);
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-info-list { list-style: none; }
+
+        .footer-info-list li {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .footer-info-list i { color: var(--primary-pink); margin-top: 4px; }
+        .footer-info-list a { color: #555; text-decoration: none; }
+        .footer-info-list a:hover { color: var(--dark-pink); }
+
+        .copyright {
+            text-align: center;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        /* ---------------- POPUP MODAL ĐĂNG NHẬP ---------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+
+        .login-modal {
+            background: #ffffff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 35px 30px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            color: #aaa;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        .close-modal:hover { color: #333; }
+
+        .modal-title {
+            font-size: 26px;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 14px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .modal-input:focus {
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 8px rgba(255, 102, 153, 0.2);
+        }
+
+        .btn-modal-submit {
+            width: 100%;
+            padding: 14px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-modal-submit:hover { background: #ee5253; }
+    </style>
+</head>
+<body>
+
+    <!-- Thanh Admin -->
+    <div class="admin-bar" id="adminBar">
+        <span><i class="fa-solid fa-user-shield"></i> Chế độ Quản trị viên:</span>
+        <label class="switch">
+            <input type="checkbox" id="adminToggle" onchange="toggleAdminMode()">
+            <span class="slider"></span>
+        </label>
+        <span id="adminStatusText" style="color: #bdc3c7;">(Đã TẮT - Xem như Khách)</span>
+        <button class="btn-change-pass" onclick="changeAdminPassword()"><i class="fa-solid fa-key"></i> Đổi MK</button>
+        <button class="btn-logout" onclick="logoutAdmin()"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="brand"><i class="fa-solid fa-rose"></i> Tiệm Hoa Hồng</a>
+            <div class="nav-right">
+                <a href="tel:0358436109" class="btn-call"><i class="fa-solid fa-phone"></i> 0358 436 109</a>
+                <button class="btn-admin-login" onclick="openLoginModal()" id="loginBtn"><i class="fa-solid fa-lock"></i> Quản lý</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Banner -->
+    <section class="hero">
+        <h1>Tiệm Hoa Hồng</h1>
+        <div class="location-badge"><i class="fa-solid fa-location-dot"></i> tiệm trà D.Chi, Đồng Nhạn, Thiện Kế, Bình Xuyên, Vĩnh Phúc</div>
+        <div class="social-btns">
+            <a href="tel:0358436109" class="social-btn btn-phone"><i class="fa-solid fa-phone"></i> Gọi Điện</a>
+            <a href="https://zalo.me/0358436109" target="_blank" class="social-btn btn-zalo"><i class="fa-solid fa-comment"></i> Chat Zalo</a>
+            <a href="https://www.facebook.com/thu.hong.1209" target="_blank" class="social-btn btn-fb"><i class="fa-brands fa-facebook"></i> Facebook</a>
+        </div>
+    </section>
+
+    <!-- Danh Mục Sản Phẩm -->
+    <section class="container">
+        <h2 class="section-title">Hoa của tiệm hoa hồng</h2>
+        <div class="products-grid" id="productsGrid"></div>
+
+        <div class="add-product-box">
+            <h3><i class="fa-solid fa-square-plus"></i> Thêm Mẫu Hoa Mới</h3>
+            <div class="form-group">
+                <label>Tên Mẫu Hoa:</label>
+                <input type="text" id="newTitle" placeholder="Ví dụ: Bó hoa hướng dương tươi thắm">
+            </div>
+            <div class="form-group">
+                <label>Giá Bán (VNĐ):</label>
+                <input type="text" id="newPrice" placeholder="Ví dụ: 300.000 VNĐ">
+            </div>
+            <div class="form-group">
+                <label>Hình Ảnh Sản Phẩm:</label>
+                <div class="upload-options">
+                    <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+                    <label for="fileInput" class="file-upload-btn"><i class="fa-solid fa-upload"></i> Tải ảnh lên từ máy tính</label>
+                    <div style="text-align: center; font-size: 12px; color: #888;">— HOẶC —</div>
+                    <input type="text" id="newImg" placeholder="Dán đường dẫn ảnh (URL) tại đây..." oninput="handleUrlInput(this.value)">
+                </div>
+                <img id="previewImg" class="img-preview" alt="Xem trước ảnh">
+            </div>
+            <button class="btn-submit-add" onclick="addNewProduct()"><i class="fa-solid fa-plus"></i> Đăng Mẫu Hoa Mới</button>
+        </div>
+    </section>
+
+    <!-- Footer Liên Hệ -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3><i class="fa-solid fa-rose"></i> Tiệm Hoa Hồng</h3>
+                <p style="font-size: 14px; color: #666; margin-bottom: 10px;">Chuyên thiết kế lẵng hoa, bó hoa tươi nghệ thuật cho dịp lễ, sinh nhật, khai trương và sự kiện.</p>
+            </div>
+            <div class="footer-col">
+                <h3><i class="fa-solid fa-address-book"></i> Thông Tin Liên Hệ</h3>
+                <ul class="footer-info-list">
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span><strong>Địa chỉ:</strong> tiệm trà D.Chi, Đồng Nhạn, Thiện Kế, Bình Xuyên, Vĩnh Phúc</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-phone"></i>
+                        <span><strong>Hotline/Zalo:</strong> <a href="tel:0358436109">0358 436 109</a></span>
+                    </li>
+                    <li>
+                        <i class="fa-brands fa-facebook"></i>
+                        <span><strong>Facebook:</strong> <a href="https://www.facebook.com/thu.hong.1209" target="_blank">Trần Thu Hồng</a></span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; Tiệm Hoa Hồng - Tất cả quyền được bảo lưu.
+        </div>
+    </footer>
+
+    <!-- MODAL ĐĂNG NHẬP -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-modal">
+            <button class="close-modal" onclick="closeLoginModal()">&times;</button>
+            <h2 class="modal-title">Đăng Nhập</h2>
+            
+            <form onsubmit="handleModalLogin(event)">
+                <input type="text" id="modalUser" class="modal-input" placeholder="Tài khoản đăng nhập" required>
+                <input type="password" id="modalPass" class="modal-input" placeholder="Mật khẩu" required>
+                
+                <button type="submit" class="btn-modal-submit">Đăng Nhập</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript Xử Lý -->
+    <script>
+        const DEFAULT_USERNAME = "dammanh04";
+        const DEFAULT_PASSWORD = "Hongmanh2021@@";
+        let currentUploadedImage = "";
+
+        function getAdminPassword() {
+            return localStorage.getItem('tiem_hoa_hong_admin_pass') || DEFAULT_PASSWORD;
+        }
+
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.add('active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        function handleModalLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('modalUser').value.trim();
+            const pass = document.getElementById('modalPass').value.trim();
+
+            if (user === DEFAULT_USERNAME && pass === getAdminPassword()) {
+                document.body.classList.add('is-logged-in');
+                document.getElementById('loginBtn').style.display = 'none';
+                closeLoginModal();
+                alert("Đăng nhập Admin thành công!");
+            } else {
+                alert("Tài khoản hoặc Mật khẩu không chính xác!");
+            }
+        }
+
+        function changeAdminPassword() {
+            const currentPass = prompt("Nhập mật khẩu HIỆN TẠI:");
+            if (currentPass === null) return;
+
+            if (currentPass !== getAdminPassword()) {
+                alert("Mật khẩu hiện tại không chính xác!");
+                return;
+            }
+
+            const newPass = prompt("Nhập MẬT KHẨU MỚI:");
+            if (!newPass || newPass.trim() === '') {
+                alert("Mật khẩu mới không được để trống!");
+                return;
+            }
+
+            const confirmPass = prompt("XÁC NHẬN lại Mật khẩu mới:");
+            if (newPass !== confirmPass) {
+                alert("Mật khẩu xác nhận không khớp!");
+                return;
+            }
+
+            localStorage.setItem('tiem_hoa_hong_admin_pass', newPass);
+            alert("Đổi mật khẩu thành công!");
+        }
+
+        function logoutAdmin() {
+            document.body.classList.remove('is-logged-in');
+            document.body.classList.remove('admin-mode');
+            document.getElementById('adminToggle').checked = false;
+            document.getElementById('loginBtn').style.display = 'inline-block';
+            document.getElementById('modalUser').value = '';
+            document.getElementById('modalPass').value = '';
+            alert("Đã đăng xuất tài khoản quản lý.");
+        }
+
+        function toggleAdminMode() {
+            const isAdmin = document.getElementById('adminToggle').checked;
+            const statusText = document.getElementById('adminStatusText');
+            if (isAdmin) {
+                document.body.classList.add('admin-mode');
+                statusText.innerText = "(Đang BẬT - Quản lý sản phẩm)";
+                statusText.style.color = "#2ecc71";
+            } else {
+                document.body.classList.remove('admin-mode');
+                statusText.innerText = "(Đã TẮT - Xem như Khách)";
+                statusText.style.color = "#bdc3c7";
+            }
+        }
+
+        // Xử lý Upload Ảnh từ Máy tính
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    currentUploadedImage = event.target.result;
+                    const preview = document.getElementById('previewImg');
+                    preview.src = currentUploadedImage;
+                    preview.style.display = 'block';
+                    document.getElementById('newImg').value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleUrlInput(val) {
+            const preview = document.getElementById('previewImg');
+            if (val.trim() !== '') {
+                currentUploadedImage = val.trim();
+                preview.src = currentUploadedImage;
+                preview.style.display = 'block';
+                document.getElementById('fileInput').value = '';
+            } else {
+                preview.style.display = 'none';
+                currentUploadedImage = '';
+            }
+        }
+
+        const defaultProducts = [
+            { id: 1, title: "Bó Hoa Hồng Đỏ Nghệ Thuật", price: "350.000 VNĐ", img: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80" },
+            { id: 2, title: "Lẵng Hoa Kem Dịu Dàng", price: "450.000 VNĐ", img: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        function getProducts() {
+            const saved = localStorage.getItem('tiem_hoa_hong_products');
+            return saved ? JSON.parse(saved) : defaultProducts;
+        }
+
+        function saveProducts(products) {
+            localStorage.setItem('tiem_hoa_hong_products', JSON.stringify(products));
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const products = getProducts();
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            products.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${p.img}" class="product-img" alt="${p.title}">
+                    <div class="product-info">
+                        <div class="product-title">${p.title}</div>
+                        <div class="product-price">${p.price}</div>
+                        <a href="https://zalo.me/0358436109" target="_blank" class="btn-order"><i class="fa-solid fa-cart-shopping"></i> Đặt Hoa</a>
+                    </div>
+                    <div class="admin-controls">
+                        <label>Tên Mẫu Hoa:</label>
+                        <input type="text" value="${p.title}" onchange="editProduct(${p.id}, 'title', this.value)">
+                        <label>Giá Bán:</label>
+                        <input type="text" value="${p.price}" onchange="editProduct(${p.id}, 'price', this.value)">
+                        <label>Link Ảnh:</label>
+                        <input type="text" value="${p.img}" onchange="editProduct(${p.id}, 'img', this.value)">
+                        <button class="btn-delete-prod" onclick="deleteProduct(${p.id})">Xóa Mẫu Hoa</button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function editProduct(id, field, value) {
+            let products = getProducts();
+            products = products.map(p => {
+                if (p.id === id) p[field] = value;
+                return p;
+            });
+            saveProducts(products);
+        }
+
+        function deleteProduct(id) {
+            if (confirm("Xóa mẫu hoa này?")) {
+                let products = getProducts().filter(p => p.id !== id);
+                saveProducts(products);
+            }
+        }
+
+        function addNewProduct() {
+            const title = document.getElementById('newTitle').value.trim();
+            const price = document.getElementById('newPrice').value.trim();
+            const img = currentUploadedImage || document.getElementById('newImg').value.trim();
+
+            if (!title || !price || !img) {
+                alert("Vui lòng điền đủ tên, giá và chọn/dán hình ảnh sản phẩm!");
+                return;
+            }
+
+            const products = getProducts();
+            products.push({ id: Date.now(), title, price, img });
+            saveProducts(products);
+
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newPrice').value = '';
+            document.getElementById('newImg').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('previewImg').style.display = 'none';
+            currentUploadedImage = '';
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
